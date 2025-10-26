@@ -1,0 +1,112 @@
+/* src/styles/theme.css
+   CSS variables for theming and reduced-motion handling.
+   We'll define base variables, an "autumn" theme, and a dark theme.
+*/
+
+:root {
+  /* spacing & sizing */
+  --space-xs: 6px;
+  --space-sm: 10px;
+  --space-md: 16px;
+  --space-lg: 24px;
+
+  /* base colors (light theme) */
+  --bg: #fffaf0;           /* page background (soft warm) */
+  --card-bg: #ffffff;      /* cards / panels */
+  --text: #111827;         /* main text */
+  --muted: #6b7280;        /* secondary text */
+  --accent: #f59e0b;       /* primary accent (autumny amber) */
+  --accent-2: #f97316;     /* stronger accent for highlights */
+  --danger: #ef4444;       /* destructive / error */
+  --surface-border: rgba(17,17,17,0.06);
+
+  /* shadows / radii */
+  --radius: 10px;
+  --shadow-1: 0 6px 18px rgba(17,17,17,0.06);
+
+  /* layout */
+  --content-max: 1100px;
+}
+
+/* Autumn theme (explicit class toggle) */
+.theme-autumn {
+  --bg: #fff7ed;       /* warmer page base */
+  --card-bg: #fffaf2;  /* subtle warm cards */
+  --text: #1f2937;
+  --muted: #6b644f;
+  --accent: #f59e0b;
+  --accent-2: #f97316;
+  --surface-border: rgba(245, 158, 11, 0.08);
+}
+
+/* Dark theme (explicit class toggle) */
+.theme-dark {
+  --bg: #0b1220;
+  --card-bg: #0f1724;
+  --text: #e6eef8;
+  --muted: #9aa7b2;
+  --accent: #f59e0b; /* keep an amber accent even in dark mode */
+  --accent-2: #fb923c;
+  --surface-border: rgba(255,255,255,0.04);
+  --shadow-1: none;
+}
+
+/* Apply variables to global elements */
+html, body, #root {
+  background: var(--bg);
+  color: var(--text);
+  height: 100%;
+}
+
+/* Utility classes many components will reuse */
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--surface-border);
+  padding: var(--space-md);
+}
+
+/* Buttons using accent */
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn.secondary {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--surface-border);
+}
+
+/* Accessible focus style */
+:focus {
+  outline: 3px solid transparent;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+  border-radius: 8px;
+}
+
+/* Respect user reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Small responsive tweaks */
+@media (max-width: 640px) {
+  .container { padding: var(--space-md); }
+}

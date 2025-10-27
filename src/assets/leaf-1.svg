@@ -1,0 +1,14 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g id="leaf-1">
+    <path d="M40,100 Q40,70 60,60 Q80,50 90,70 Q85,90 70,95 Q55,100 40,100 Z" fill="currentColor" opacity="0.8"/>
+    <path d="M60,60 L70,95" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+  </g>
+  <g id="leaf-2" transform="translate(100, 0)">
+    <path d="M40,100 Q40,65 65,55 Q90,45 95,75 Q90,95 70,100 Q50,105 40,100 Z" fill="currentColor" opacity="0.7"/>
+    <path d="M65,55 L70,100" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+  </g>
+  <g id="leaf-3" transform="translate(0, 100)">
+    <path d="M50,50 Q50,30 70,25 Q90,20 90,40 Q85,55 70,58 Q55,60 50,50 Z" fill="currentColor" opacity="0.6"/>
+    <path d="M70,25 L70,58" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+  </g>
+</svg>

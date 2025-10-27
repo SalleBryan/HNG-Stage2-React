@@ -1,64 +1,88 @@
+// src/pages/TicketList.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import TicketForm from "../components/TicketForm";
 import TicketItem from "../components/TicketItem";
 import TicketEditModal from "../components/TicketEditModal";
+import ConfirmDialog from "../components/ConfirmDialog";
 import { getTickets, deleteTicket } from "../utils/storage";
+import { useToastContext } from "../context/ToastProvider";
+import useDebounce from "../hooks/useDebounce";
+import useAuth from "../hooks/useAuth";
 import "../styles/tickets.css";
 
-
-//TicketList with search (title + description), filters (status, priority), and sort.
-
 export default function TicketList() {
+  const { session } = useAuth();
+  const ownerEmail = session?.user?.email;
   const [tickets, setTickets] = useState([]);
   const [editingTicket, setEditingTicket] = useState(null);
 
-  // UI state for search/filters/sort
+  // search / filters / sort UI state
   const [query, setQuery] = useState("");
-  const [debouncedQuery, setDebouncedQuery] = useState(""); // used for actual filtering
-  const [statusFilter, setStatusFilter] = useState("all"); // all | open | in-progress | closed
+  const debouncedQuery = useDebounce(query, 300);
+  const [statusFilter, setStatusFilter] = useState("all"); // all | open | in_progress | closed
   const [priorityFilter, setPriorityFilter] = useState("all"); // all | low | medium | high
   const [sortOrder, setSortOrder] = useState("newest"); // newest | oldest
 
-  // Load tickets once on mount
-  useEffect(() => {
-    setTickets(getTickets());
-  }, []);
+  // confirm delete dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [toDelete, setToDelete] = useState(null);
 
-  // Debounce query: update debouncedQuery 300ms after user stops typing
-  useEffect(() => {
-    const id = setTimeout(() => setDebouncedQuery(query.trim()), 300);
-    return () => clearTimeout(id);
-  }, [query]);
+  const toast = useToastContext();
 
+  // initial load for current user
+  useEffect(() => {
+    setTickets(getTickets(ownerEmail));
+  }, [ownerEmail]);
+
+  // Create: parent receives new ticket from TicketForm
   function handleCreate(newTicket) {
     setTickets((prev) => [newTicket, ...prev]);
+    toast?.push({ type: "success", title: "Ticket created", message: newTicket.title });
   }
 
-  function handleDelete(id) {
-    const ok = deleteTicket(id);
-    if (ok) setTickets((prev) => prev.filter((t) => t.id !== id));
-    else setTickets(getTickets());
-  }
-
+  // Edit flows
   function handleEditOpen(ticket) {
     setEditingTicket(ticket);
   }
-
   function handleEditClose() {
     setEditingTicket(null);
   }
-
   function handleEditSaved(updatedTicket) {
     setTickets((prev) => prev.map((t) => (t.id === updatedTicket.id ? updatedTicket : t)));
+    toast?.push({ type: "success", title: "Ticket updated", message: updatedTicket.title });
   }
 
-  // Derived list: apply search (title + description), filters, and sorting
+  // Delete flows: open confirm dialog first
+  function requestDelete(ticket) {
+    setToDelete(ticket);
+    setConfirmOpen(true);
+  }
+
+  function performDelete(id) {
+    if (!id) {
+      setConfirmOpen(false);
+      setToDelete(null);
+      return;
+    }
+    const ok = deleteTicket(id);
+    if (ok) {
+      setTickets((prev) => prev.filter((t) => t.id !== id));
+      toast?.push({ type: "success", title: "Deleted", message: "Ticket deleted." });
+    } else {
+      // fallback: refresh from storage
+      setTickets(getTickets(ownerEmail));
+      toast?.push({ type: "error", title: "Delete failed", message: "Could not delete ticket." });
+    }
+    setConfirmOpen(false);
+    setToDelete(null);
+  }
+
+  // Filter / search / sort - derived list
   const visibleTickets = useMemo(() => {
-    // start from the in-memory tickets (which reflect storage)
     let list = Array.isArray(tickets) ? [...tickets] : [];
 
-    // Search: match in title OR description (case-insensitive)
-    if (debouncedQuery) {
+    // search matches title OR description (case-insensitive)
+    if (debouncedQuery && debouncedQuery.trim() !== "") {
       const q = debouncedQuery.toLowerCase();
       list = list.filter((t) => {
         const title = (t.title || "").toLowerCase();
@@ -67,17 +91,17 @@ export default function TicketList() {
       });
     }
 
-    // Status filter
+    // status filter (note: storage uses 'in_progress')
     if (statusFilter !== "all") {
       list = list.filter((t) => t.status === statusFilter);
     }
 
-    // Priority filter
+    // priority filter
     if (priorityFilter !== "all") {
       list = list.filter((t) => t.priority === priorityFilter);
     }
 
-    // Sort
+    // sort
     list.sort((a, b) => {
       if (sortOrder === "newest") return b.createdAt - a.createdAt;
       return a.createdAt - b.createdAt;
@@ -86,7 +110,7 @@ export default function TicketList() {
     return list;
   }, [tickets, debouncedQuery, statusFilter, priorityFilter, sortOrder]);
 
-  // Quick helpers to toggle filters (for simple buttons)
+  // toggle helpers for filter buttons
   function setStatusOrToggle(value) {
     setStatusFilter((prev) => (prev === value ? "all" : value));
   }
@@ -94,14 +118,26 @@ export default function TicketList() {
     setPriorityFilter((prev) => (prev === value ? "all" : value));
   }
 
+  // If no owner (not logged in), show prompt
+  if (!ownerEmail) {
+    return (
+      <div className="card" style={{ maxWidth: 680, margin: "0 auto" }}>
+        <h2>Tickets</h2>
+        <p style={{ color: "var(--muted)" }}>Please sign in to view and manage your tickets.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h2>Tickets</h2>
 
+      {/* Create form - pass owner so storage records ownership */}
       <section style={{ marginBottom: 16 }}>
-        <TicketForm onCreate={handleCreate} />
+        <TicketForm onCreate={handleCreate} owner={ownerEmail} />
       </section>
 
+      {/* Controls: search / filters / sort */}
       <section style={{ marginBottom: 12 }}>
         <div className="controls-row" role="region" aria-label="Search and filters">
           <div className="control-search">
@@ -126,8 +162,8 @@ export default function TicketList() {
                 Open
               </button>
               <button
-                className={statusFilter === "in-progress" ? "active" : ""}
-                onClick={() => setStatusOrToggle("in-progress")}
+                className={statusFilter === "in_progress" ? "active" : ""}
+                onClick={() => setStatusOrToggle("in_progress")}
               >
                 In progress
               </button>
@@ -174,17 +210,20 @@ export default function TicketList() {
         </div>
       </section>
 
+      {/* Tickets list */}
       <section>
         <h3>Your tickets</h3>
         {visibleTickets.length === 0 ? (
-          <p>No tickets match your search / filters — try clearing filters or creating a new ticket.</p>
+          <div className="ticket-empty">
+            <p>No tickets match your search / filters — try clearing filters or creating a new ticket.</p>
+          </div>
         ) : (
           <div className="ticket-list">
             {visibleTickets.map((t) => (
               <TicketItem
                 key={t.id}
                 ticket={t}
-                onDelete={handleDelete}
+                onRequestDelete={requestDelete}
                 onEdit={handleEditOpen}
               />
             ))}
@@ -192,10 +231,20 @@ export default function TicketList() {
         )}
       </section>
 
+      {/* Edit modal */}
       <TicketEditModal
         ticket={editingTicket}
         onClose={handleEditClose}
         onSaved={handleEditSaved}
+      />
+
+      {/* Confirm delete dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete ticket"
+        message={`Delete "${toDelete?.title || ""}"? This action cannot be undone.`}
+        onCancel={() => { setConfirmOpen(false); setToDelete(null); }}
+        onConfirm={() => performDelete(toDelete?.id)}
       />
     </div>
   );

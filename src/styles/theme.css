@@ -1,112 +1,92 @@
-/* src/styles/theme.css
-   CSS variables for theming and reduced-motion handling.
-   We'll define base variables, an "autumn" theme, and a dark theme.
-*/
+/* src/styles/theme.css — polished tokens + global rules (autumn-first) */
 
-:root {
-  /* spacing & sizing */
-  --space-xs: 6px;
-  --space-sm: 10px;
-  --space-md: 16px;
-  --space-lg: 24px;
+/* DESIGN TOKENS */
+:root{
+  --space-xs: 6px; --space-sm: 10px; --space-md: 16px; --space-lg: 24px; --space-xl: 40px;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+  --font-heading: 'Merriweather', Georgia, serif;
 
-  /* base colors (light theme) */
-  --bg: #fffaf0;           /* page background (soft warm) */
-  --card-bg: #ffffff;      /* cards / panels */
-  --text: #111827;         /* main text */
-  --muted: #6b7280;        /* secondary text */
-  --accent: #f59e0b;       /* primary accent (autumny amber) */
-  --accent-2: #f97316;     /* stronger accent for highlights */
-  --danger: #ef4444;       /* destructive / error */
-  --surface-border: rgba(17,17,17,0.06);
+  /* Autumn Light (default) */
+  --color-bg: #FFF8F2;          /* paper-cream */
+  --color-surface: #FFF6EE;     /* card surface */
+  --color-text: #2B1F1B;        /* deep coffee */
+  --color-muted: #8C6A5A;
+  --accent-strong: #C14A16;     /* pumpkin */
+  --accent-warm: #D96B2C;
+  --leaf-gold: #B86B21;
+  --leaf-olive: #6B8B3A;
+  --muted-brown: #8C7B71;
+  --glass: rgba(255,255,255,0.6);
 
-  /* shadows / radii */
-  --radius: 10px;
-  --shadow-1: 0 6px 18px rgba(17,17,17,0.06);
-
-  /* layout */
-  --content-max: 1100px;
+  --shadow-sm: 0 6px 18px rgba(22,18,12,0.06);
+  --shadow-soft: 0 14px 36px rgba(22,18,12,0.08);
+  --radius-md: 12px;
+  --content-max: 1200px;
 }
 
-/* Autumn theme (explicit class toggle) */
-.theme-autumn {
-  --bg: #fff7ed;       /* warmer page base */
-  --card-bg: #fffaf2;  /* subtle warm cards */
-  --text: #1f2937;
-  --muted: #6b644f;
-  --accent: #f59e0b;
-  --accent-2: #f97316;
-  --surface-border: rgba(245, 158, 11, 0.08);
+/* Autumn Dark mode (cozy) */
+.theme-dark, [data-theme="dark"] {
+  --color-bg: #0b1114;         /* deep navy/coffee */
+  --color-surface: #11171a;
+  --color-text: #f3efe9;
+  --color-muted: #a08776;
+  --accent-strong: #D96B2C;
+  --accent-warm: #FB923C;
+  --leaf-olive: #7DA24A;
+  --muted-brown: #6E5A4C;
+  --glass: rgba(255,255,255,0.04);
+
+  --shadow-sm: none;
+  --shadow-soft: 0 10px 30px rgba(0,0,0,0.6);
 }
 
-/* Dark theme (explicit class toggle) */
-.theme-dark {
-  --bg: #0b1220;
-  --card-bg: #0f1724;
-  --text: #e6eef8;
-  --muted: #9aa7b2;
-  --accent: #f59e0b; /* keep an amber accent even in dark mode */
-  --accent-2: #fb923c;
-  --surface-border: rgba(255,255,255,0.04);
-  --shadow-1: none;
-}
+/* BASE */
+* { box-sizing: border-box; }
+html,body,#root { height: 100%; margin:0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+.container { max-width: var(--content-max); margin: 0 auto; padding: var(--space-lg); }
 
-/* Apply variables to global elements */
-html, body, #root {
-  background: var(--bg);
-  color: var(--text);
-  height: 100%;
-}
+/* HEADER + NAV */
+.app-header { display:flex; align-items:center; justify-content:space-between; gap:18px; padding: 14px var(--space-lg); background: linear-gradient(180deg, transparent, rgba(0,0,0,0.01)); border-bottom: 1px solid rgba(0,0,0,0.04); }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand .logo { width:44px; height:44px; border-radius:10px; background: linear-gradient(135deg, var(--accent-warm), var(--accent-strong)); display:flex; align-items:center; justify-content:center; color: white; font-weight:700; font-family:var(--font-heading); }
+.app-header nav a { color: var(--color-muted); text-decoration:none; padding:8px 10px; border-radius:8px; font-weight:700; font-size:14px; }
+.app-header nav a:hover, .app-header nav a.active { color: var(--color-text); background: linear-gradient(90deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01)); }
 
-/* Utility classes many components will reuse */
-.container {
-  max-width: var(--content-max);
-  margin: 0 auto;
-  padding: var(--space-lg);
+/* HERO (will be a component render) */
+.hero {
+  display:flex; align-items:center; gap:24px; padding: 36px; border-radius: 16px; background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+  box-shadow: var(--shadow-soft); position:relative; overflow:hidden;
 }
+.hero .hero-content { max-width: 640px; }
+.hero h1 { font-family: var(--font-heading); font-size: 34px; margin: 0 0 12px; color: var(--color-text); line-height:1.08; }
+.hero p { color: var(--color-muted); margin:0 0 18px; font-size:16px; }
 
-.card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-1);
-  border: 1px solid var(--surface-border);
-  padding: var(--space-md);
-}
+/* Buttons */
+.btn { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius: 10px; font-weight:800; cursor:pointer; border:none; color:white; background: linear-gradient(180deg, var(--accent-warm), var(--accent-strong)); box-shadow: 0 8px 26px rgba(193,74,22,0.12); transition: transform .12s ease, box-shadow .12s ease; }
+.btn:hover { transform: translateY(-3px); box-shadow: 0 18px 40px rgba(193,74,22,0.14); }
+.btn.secondary { background: transparent; color: var(--color-text); border: 1px solid rgba(0,0,0,0.06); box-shadow:none; }
 
-/* Buttons using accent */
-.btn {
-  display: inline-block;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: var(--accent);
-  color: white;
-  cursor: pointer;
-  font-weight: 600;
-}
-.btn.secondary {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--surface-border);
-}
+/* Cards */
+.card { background: linear-gradient(180deg, var(--color-surface), rgba(255,255,255,0.02)); border-radius: var(--radius-md); padding: 16px; border: 1px solid rgba(0,0,0,0.04); box-shadow: var(--shadow-sm); }
 
-/* Accessible focus style */
-:focus {
-  outline: 3px solid transparent;
-  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
-  border-radius: 8px;
-}
+/* Form controls */
+input, textarea, select { border-radius: 12px; padding: 10px 12px; border: 1px solid rgba(0,0,0,0.06); background: rgba(255,255,255,0.6); color: var(--color-text); font-size:14px; }
+.theme-dark input, .theme-dark textarea, .theme-dark select { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.04); color: var(--color-text); }
 
-/* Respect user reduced motion */
+/* Focus ring */
+:focus { outline: none; box-shadow: 0 0 0 4px rgba(217,107,44,0.12); border-radius: 10px; }
+
+/* Status tokens */
+.status-open { background: rgba(107,139,58,0.12); color: var(--leaf-olive); border: 1px solid rgba(107,139,58,0.18); }
+.status-progress { background: rgba(217,107,44,0.12); color: var(--accent-warm); border: 1px solid rgba(217,107,44,0.18); }
+.status-closed { background: rgba(140,123,113,0.12); color: var(--muted-brown); border: 1px solid rgba(140,123,113,0.18); }
+.status-pill { padding: 6px 10px; border-radius: 999px; font-weight:700; font-size:12px; display:inline-flex; align-items:center; gap:8px; }
+
+/* Card hover */
+.ticket-item { transition: transform .12s ease, box-shadow .12s ease; }
+.ticket-item:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(22, 18, 12, 0.08); }
+
+/* Reduced motion: respect user's preference */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-  }
-}
-
-/* Small responsive tweaks */
-@media (max-width: 640px) {
-  .container { padding: var(--space-md); }
+  .btn, .ticket-item, .hero { transition: none !important; transform: none !important; }
 }

@@ -22,6 +22,13 @@ const router = createBrowserRouter([
         </ToastProvider>
       </AuthProvider>
     ),
+    errorElement: (
+      <AuthProvider>
+        <ToastProvider>
+          <App />
+        </ToastProvider>
+      </AuthProvider>
+    ),
     children: [
       { path: "/", element: <Home /> },
       { path: "/auth/login", element: <Login /> },

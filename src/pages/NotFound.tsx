@@ -1,7 +1,7 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import { Home, ArrowLeft } from "lucide-react"
+import { Home, ArrowLeft, Leaf } from "lucide-react"
 
 export default function NotFound() {
   return (
@@ -52,7 +52,9 @@ export default function NotFound() {
           </div>
         </div>
 
-        <div style={{ fontSize: "80px", opacity: 0.3 }}>🍂</div>
+        <div style={{ opacity: 0.3, display: "flex", justifyContent: "center" }}>
+          <Leaf size={80} color="var(--accent-secondary)" />
+        </div>
       </div>
     </div>
   )

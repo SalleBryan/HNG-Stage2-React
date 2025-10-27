@@ -38,7 +38,7 @@ A modern, accessible ticket management web application with a beautiful autumn t
 
 ### Quick Start
 
-\`\`\`bash
+```bash
 # Install dependencies
 npm install
 
@@ -50,7 +50,7 @@ npm run build
 
 # Preview production build
 npm run preview
-\`\`\`
+```
 
 The app will be available at `http://localhost:5173`
 
@@ -123,14 +123,14 @@ Located in `/src/assets/autumn/`:
 
 Use these credentials to test the authentication flow:
 
-\`\`\`
+```
 Email: test@ticketapp.local
 Password: Password123!
-\`\`\`
+```
 
 ## 📁 Project Structure
 
-\`\`\`
+```
 src/
 ├── assets/
 │   └── autumn/          # Seasonal SVG and texture assets
@@ -156,12 +156,12 @@ src/
 │   ├── theme.css        # Theme variables
 │   └── App.css          # Component styles
 └── App.tsx              # Root component with routing
-\`\`\`
+```
 
 ## 🎯 Data Model
 
 ### Ticket Schema
-\`\`\`typescript
+```typescript
 interface Ticket {
   id: string;
   title: string;              // Required, 3-200 chars
@@ -171,7 +171,7 @@ interface Ticket {
   createdAt: string;          // ISO date
   updatedAt: string;          // ISO date
 }
-\`\`\`
+```
 
 ### Validation Rules
 - **Title**: Required, 3-200 characters

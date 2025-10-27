@@ -1,7 +1,7 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import { Ticket, BarChart3, Palette, Github, Twitter, Mail } from "lucide-react"
+import { Ticket, BarChart3, Palette, Github, Twitter, Mail, Linkedin } from "lucide-react"
 import { useAuth } from "../context/AuthProvider"
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
       <div className="container" style={{ paddingTop: "var(--space-xl)", paddingBottom: "var(--space-2xl)" }}>
         <div className="hero">
           <div className="hero-content">
-            <h1>Manage Tickets with Autumn Elegance</h1>
+            <h1>Manage Tickets with Ease and Elegance</h1>
             <p className="text-pretty">
               A beautiful, intuitive ticket management system designed with warm autumn aesthetics. Track, organize, and
               resolve tickets efficiently while enjoying a delightful user experience.
@@ -178,14 +178,14 @@ export default function Home() {
             <div>
               <h4 style={{ marginBottom: "var(--space-md)", fontSize: "var(--font-size-md)" }}>Connect</h4>
               <div style={{ display: "flex", gap: "var(--space-md)" }}>
-                <a href="#" aria-label="GitHub" style={{ color: "var(--color-text-secondary)" }}>
+                <a href="https://github.com/sallebryan" target="_blank" aria-label="GitHub" style={{ color: "var(--color-text-secondary)" }}>
                   <Github size={20} />
                 </a>
-                <a href="#" aria-label="Twitter" style={{ color: "var(--color-text-secondary)" }}>
+                <a href="https://x.com/bryanja72423970" target="_blank" aria-label="X" style={{ color: "var(--color-text-secondary)" }}>
                   <Twitter size={20} />
                 </a>
-                <a href="#" aria-label="Email" style={{ color: "var(--color-text-secondary)" }}>
-                  <Mail size={20} />
+                <a href="https://www.linkedin.com/in/salle-yimnai-bryan-56619b322" target="_blank" aria-label="Email" style={{ color: "var(--color-text-secondary)" }}>
+                  <Linkedin size={20} />
                 </a>
               </div>
             </div>
@@ -199,7 +199,7 @@ export default function Home() {
             }}
           >
             <p style={{ color: "var(--color-muted)", fontSize: "var(--font-size-sm)", margin: 0 }}>
-              © {new Date().getFullYear()} TicketFlow. All rights reserved.
+              © {new Date().getFullYear()} Salle Bryan. All rights reserved.
             </p>
           </div>
         </div>

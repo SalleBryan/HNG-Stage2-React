@@ -1,16 +1,61 @@
 "use client"
 
 import { Link } from "react-router-dom"
-import { Ticket, BarChart3, Palette, Github, Twitter, Mail, Linkedin } from "lucide-react"
+import { Ticket, BarChart3, Palette, Github, Twitter, Linkedin } from "lucide-react"
 import { useAuth } from "../context/AuthProvider"
+import { useState, useEffect } from "react"
 
 export default function Home() {
   const { user } = useAuth()
+  const [theme, setTheme] = useState<"light" | "dark">("light")
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+    const initialTheme = savedTheme || (prefersDark ? "dark" : "light")
+    setTheme(initialTheme)
+
+    // Listen for theme changes
+    const observer = new MutationObserver(() => {
+      const currentTheme = document.documentElement.getAttribute("data-theme") as "light" | "dark"
+      if (currentTheme) {
+        setTheme(currentTheme)
+      }
+    })
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    })
+
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <>
       <div className="container" style={{ paddingTop: "var(--space-xl)", paddingBottom: "var(--space-2xl)" }}>
-        <div className="hero">
+        <div className="hero" style={{ position: "relative", overflow: "hidden" }}>
+          <svg
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              width: "100%",
+              height: "auto",
+              zIndex: 0,
+              pointerEvents: "none",
+              opacity: 0.3,
+            }}
+            viewBox="0 0 1200 120"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0,0 C150,80 350,0 600,50 C850,100 1050,20 1200,80 L1200,120 L0,120 Z"
+              fill={theme === "light" ? "#d97706" : "#92400e"}
+            />
+          </svg>
+          {/* </CHANGE> */}
           <div className="hero-content">
             <h1>Manage Tickets with Ease and Elegance</h1>
             <p className="text-pretty">
@@ -178,13 +223,31 @@ export default function Home() {
             <div>
               <h4 style={{ marginBottom: "var(--space-md)", fontSize: "var(--font-size-md)" }}>Connect</h4>
               <div style={{ display: "flex", gap: "var(--space-md)" }}>
-                <a href="https://github.com/sallebryan" target="_blank" aria-label="GitHub" style={{ color: "var(--color-text-secondary)" }}>
+                <a
+                  href="https://github.com/sallebryan"
+                  target="_blank"
+                  aria-label="GitHub"
+                  style={{ color: "var(--color-text-secondary)" }}
+                  rel="noreferrer"
+                >
                   <Github size={20} />
                 </a>
-                <a href="https://x.com/bryanja72423970" target="_blank" aria-label="X" style={{ color: "var(--color-text-secondary)" }}>
+                <a
+                  href="https://x.com/bryanja72423970"
+                  target="_blank"
+                  aria-label="X"
+                  style={{ color: "var(--color-text-secondary)" }}
+                  rel="noreferrer"
+                >
                   <Twitter size={20} />
                 </a>
-                <a href="https://www.linkedin.com/in/salle-yimnai-bryan-56619b322" target="_blank" aria-label="Email" style={{ color: "var(--color-text-secondary)" }}>
+                <a
+                  href="https://www.linkedin.com/in/salle-yimnai-bryan-56619b322"
+                  target="_blank"
+                  aria-label="Email"
+                  style={{ color: "var(--color-text-secondary)" }}
+                  rel="noreferrer"
+                >
                   <Linkedin size={20} />
                 </a>
               </div>
